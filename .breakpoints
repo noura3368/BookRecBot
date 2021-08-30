@@ -1,0 +1,20 @@
+{
+  "files": {
+    "hello": [
+      {
+        "id": "d7ca5f68-3556-49b9-94df-3abcf264b2cf",
+        "line": 1,
+        "version": 0,
+        "index": 0
+      }
+    ],
+    "main.py": [
+      {
+        "id": "dba83d78-912a-4cfe-a609-77f1155c22ff",
+        "line": 1,
+        "version": 24,
+        "index": 0
+      }
+    ]
+  }
+}
