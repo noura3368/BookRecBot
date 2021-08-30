@@ -5,7 +5,7 @@ from keep_alive import keep_alive
 import requests
 from random import randrange
 authors = ["hoover", 'sakavic', 'dessen', 'klune', 'maas', 'chokshi', 'nelson', 'levenseller', 'alexandra+christo', 'hodkin', 'a.+craig', 'jenkins+reid', 'rogerson', 'riordan',
-          'rowell', 'sally+thorne', 'edugyan', 'mahurin', 'holly+black', 'maniscalco', 'emily henry', 'foody', 'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas']
+          'rowell', 'sally+thorne', 'edugyan', 'mahurin', 'holly+black', 'maniscalco', 'emily henry', 'foody', 'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas', 'schwab', 'armas']
 
 
 def getTitle():
@@ -30,7 +30,11 @@ def getTitle():
    for value in volumeInfo[number]:
        if value == "authors":
            for aut in volumeInfo[number][value]:
-               String+= " by: " + aut
+             if count == 0:
+                String+= " by: " + aut
+                count+=1
+             else:
+                String+= ", " + aut
    return String
 
 
