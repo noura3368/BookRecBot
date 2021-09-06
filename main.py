@@ -3,21 +3,21 @@ import os
 from keep_alive import keep_alive
 import requests
 from random import randrange
+from replit import  db
 ListBooks = []
 usernamesDict = {}
 authors = ["hoover", 'sakavic', 'dessen', 'klune', 'maas', 'chokshi', 'nelson', 'levenseller', 'alexandra+christo',
            'hodkin', 'a.+craig', 'jenkins+reid', 'rogerson', 'riordan',
            'rowell', 'sally+thorne', 'edugyan', 'mahurin', 'holly+black', 'maniscalco', 'emily henry', 'foody',
-           'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas', 'schwab', 'armas']
+           'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas', 'schwab', 'armas', 'schwab']
 
 def getBooks():
     book = getTitle()
     return book
 def userBooks(username, book):
     if username not in usernamesDict:
-        print(book)
         usernamesDict[username] = [book]
-        print(usernamesDict)
+        db[username] = [book]
         return book
     else:
         list = usernamesDict.get(username)
@@ -26,7 +26,6 @@ def userBooks(username, book):
                 getTitle()
             else:
                 list.append(book)
-                print(usernamesDict)
                 return book
 
 def getRead(username):
