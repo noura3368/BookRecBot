@@ -81,7 +81,6 @@ async def on_ready():  # event when bot is ready
     print("Logged in as {0.user}".format(client))
 
 
-
 userBool = False
 username = ""
 
@@ -91,35 +90,56 @@ async def on_message(message):
     global userBool
     newBook = getBooks()
     msg = message.content
+    if client.user.mentioned_in(message):
+        await message.channel.send("Welcome to Noura's Book Recommendation Bot! Here are the instructions:\n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user")
+
+    if msg.startswith("$user"):
+        userBool = True
+        username = msg.split("$user ", 1)[1]
+        ListBooks.append(newBook)
+        await message.channel.send(newBook)
+    
     if message.content.startswith("$book"):
         if userBool == True:
             ListBooks.append(newBook)
             await message.channel.send(newBook)
         else:
             await message.channel.send("Please enter your username using $user")
-    
-    if msg.startswith("$user"):
-        userBool = True
-        username = msg.split("$user ", 1)[1]
-        ListBooks.append(newBook)
-        await message.channel.send(newBook)
   
     if message.content.startswith("$read"):
+      if userBool == True:
         if len(ListBooks) > 0:
             update_Books(username, ListBooks[-1])
             ListBooks.remove(ListBooks[-1])
             await message.channel.send("Book will be added to your read-list")
         else:
             await message.channel.send("Please enter username with $user")
+      else:
+        await message.channel.send("Please enter your username using $user")
     
     if message.content.startswith("$show"):
+      if userBool == True:
         await message.channel.send(getRead(username))
-        await message.channel.send("Use $delete followed by the book number to delete a book from the list.")
+        await message.channel.send("\nUse $delete followed by the book number to delete a book from the list.")
+      else:
+        await message.channel.send("Please enter your username using $user")
     
     if message.content.startswith("$delete"):
-      index=msg.split("$delete ", 1)[1]
-      book = delete_Books(username, index)
-      await message.channel.send(book + " has been deleted.")
+      if userBool == True:
+        index=msg.split("$delete ", 1)[1]
+        book = delete_Books(username, index)
+        ListBooks.append(book)
+        await message.channel.send(book + " has been deleted.")
+      else:
+        await message.channel.send("Please enter your username using $user")
+    
+    if message.content.startswith("$logged"):
+      if userBool == True: 
+        await message.channel.send(username + " is currently logged in.")
+      else:
+        await message.channel.send("Please enter your username using $user")
+
+
     
     if message.author == client.user:
         return

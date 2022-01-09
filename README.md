@@ -9,5 +9,9 @@ Command "$user" followed by username will be store the users data (which books t
 
 Command "$delete" followed by the index number of the book will delete the book from the users already read list 
 
+Command "$logged" will return the currently logged in user.
+
+Can mention the bot's name for instructions
+
 
 
