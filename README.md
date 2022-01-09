@@ -11,7 +11,8 @@ Command "$delete" followed by the index number of the book will delete the book 
 
 Command "$logged" will return the currently logged in user.
 
-Can mention the bot's name for instructions
+Can mention the bot's name for instructions after signed into a user
+
 
 
 

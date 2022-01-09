@@ -5,7 +5,10 @@ import requests
 from random import randrange
 from replit import db
 
+intents = discord.Intents.default()
+intents.members = True
 
+client = discord.Client(intents=intents)
 
 ListBooks = []
 
@@ -59,7 +62,16 @@ def getTitle():
                     String += ", " + aut
     return String
 
-client = discord.Client()
+@client.event
+async def on_ready():  # event when bot is ready
+    print("Logged in as {0.user}".format(client))
+
+@client.event
+async def on_member_join(member):
+  guild = client.get_guild(875833944564707329)
+  await member.send(f'Welcome to the {guild.name}, {member.name}! Here are some instructions: \n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user')
+
+#client = discord.Client()
 
 def update_Books(username, book):
   if username in db.keys():
@@ -84,10 +96,6 @@ def checkUser(username):
   else:
     return True
 
-@client.event
-async def on_ready():  # event when bot is ready
-    print("Logged in as {0.user}".format(client))
-
 
 userBool = False
 username = ""
@@ -102,8 +110,12 @@ async def on_message(message):
         await message.channel.send("Welcome to Noura's Book Recommendation Bot! Here are the instructions:\n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user")
 
     if msg.startswith("$user"):
+      try:
         username = msg.split("$user ", 1)[1]
         await message.channel.send("Are you a new user?\nPlease send '$yes' or '$no'")
+      except IndexError:
+        await message.channel.send("Please enter your username using $user")
+
     
     if msg.startswith("$yes"):
       if checkUser(username) == False:
