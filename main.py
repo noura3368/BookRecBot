@@ -22,7 +22,7 @@ def getRead(username):
   string = ''
   count = 1
   for i in db[username]:
-    string += count + '. ' + i + ',\n'
+    string += str(count) + '. ' + i + ',\n'
     count+=1
   return string[:-2]
 
@@ -66,6 +66,16 @@ def update_Books(username, book):
   else:
     db[username] = [book]
 
+def delete_Books(username, bookIndex):
+  user = db[username]
+  bookIndex = int(bookIndex) - 1
+  if len(user) > bookIndex:
+    book = user[bookIndex]
+    del user[bookIndex]
+    db[username] = user
+  return book
+
+
 @client.event
 async def on_ready():  # event when bot is ready
     print("Logged in as {0.user}".format(client))
@@ -86,7 +96,8 @@ async def on_message(message):
             ListBooks.append(newBook)
             await message.channel.send(newBook)
         else:
-            await message.channel.send("please enter your username using $user")
+            await message.channel.send("Please enter your username using $user")
+    
     if msg.startswith("$user"):
         userBool = True
         username = msg.split("$user ", 1)[1]
@@ -97,12 +108,19 @@ async def on_message(message):
         if len(ListBooks) > 0:
             update_Books(username, ListBooks[-1])
             ListBooks.remove(ListBooks[-1])
-            await message.channel.send("book will be added to your read-list")
+            await message.channel.send("Book will be added to your read-list")
         else:
             await message.channel.send("Please enter username with $user")
     
     if message.content.startswith("$show"):
         await message.channel.send(getRead(username))
+        await message.channel.send("Use $delete followed by the book number to delete a book from the list.")
+    
+    if message.content.startswith("$delete"):
+      index=msg.split("$delete ", 1)[1]
+      book = delete_Books(username, index)
+      await message.channel.send(book + " has been deleted.")
+    
     if message.author == client.user:
         return
 
