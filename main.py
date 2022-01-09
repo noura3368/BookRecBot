@@ -4,6 +4,9 @@ from keep_alive import keep_alive
 import requests
 from random import randrange
 from replit import  db
+import sqlite3
+
+
 ListBooks = []
 usernamesDict = {}
 authors = ["hoover", 'sakavic', 'dessen', 'klune', 'maas', 'chokshi', 'nelson', 'levenseller', 'alexandra+christo',
@@ -65,7 +68,10 @@ client = discord.Client()
 
 @client.event
 async def on_ready():  # event when bot is ready
+
     print("Logged in as {0.user}".format(client))
+
+
 
 userBool = False
 username = ""
