@@ -3,36 +3,29 @@ import os
 from keep_alive import keep_alive
 import requests
 from random import randrange
-from replit import  db
-import sqlite3
+from replit import db
+
 
 
 ListBooks = []
-usernamesDict = {}
+
 authors = ["hoover", 'sakavic', 'dessen', 'klune', 'maas', 'chokshi', 'nelson', 'levenseller', 'alexandra+christo',
            'hodkin', 'a.+craig', 'jenkins+reid', 'rogerson', 'riordan',
            'rowell', 'sally+thorne', 'edugyan', 'mahurin', 'holly+black', 'maniscalco', 'emily henry', 'foody',
-           'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas', 'schwab', 'armas', 'schwab']
+           'stiefvater', 'elle+kennedy', 'christina+lauren', 'penelope douglas', 'schwab', 'armas', 'schwab', 'king', 'rowling', 'McQuiston', 'hibbert', 'heather+cocks', 'hoang', 'brandon+sanderson', 'bardugo']
 
 def getBooks():
     book = getTitle()
     return book
-def userBooks(username, book):
-    if username not in usernamesDict:
-        usernamesDict[username] = [book]
-        db[username] = [book]
-        return book
-    else:
-        list = usernamesDict.get(username)
-        for i in list:
-            if i == book:
-                getTitle()
-            else:
-                list.append(book)
-                return book
 
 def getRead(username):
-   return usernamesDict.get(username)
+  string = ''
+  count = 1
+  for i in db[username]:
+    string += count + '. ' + i + ',\n'
+    count+=1
+  return string[:-2]
+
 def getTitle():
     randomauthor = randrange(len(authors))
     authorpicked = authors[randomauthor]
@@ -65,17 +58,23 @@ def getTitle():
 
 client = discord.Client()
 
+def update_Books(username, book):
+  if username in db.keys():
+    user = db[username]
+    user.append(book)
+    db[username] = user
+  else:
+    db[username] = [book]
 
 @client.event
 async def on_ready():  # event when bot is ready
-
     print("Logged in as {0.user}".format(client))
 
 
 
 userBool = False
 username = ""
-#fix
+
 @client.event
 async def on_message(message):
     global username
@@ -93,23 +92,23 @@ async def on_message(message):
         username = msg.split("$user ", 1)[1]
         ListBooks.append(newBook)
         await message.channel.send(newBook)
+  
     if message.content.startswith("$read"):
         if len(ListBooks) > 0:
-            userBooks(username, ListBooks[-1])
+            update_Books(username, ListBooks[-1])
             ListBooks.remove(ListBooks[-1])
             await message.channel.send("book will be added to your read-list")
         else:
             await message.channel.send("Please enter username with $user")
+    
     if message.content.startswith("$show"):
         await message.channel.send(getRead(username))
     if message.author == client.user:
         return
 
 
-
-
-
 my_secret = os.environ['DISCORDTOKEN']
 
 keep_alive()
 client.run(my_secret)
+
