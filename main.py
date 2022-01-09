@@ -21,10 +21,13 @@ def getBooks():
 def getRead(username):
   string = ''
   count = 1
-  for i in db[username]:
-    string += str(count) + '. ' + i + ',\n'
-    count+=1
-  return string[:-2]
+  try: 
+    for i in db[username]:
+      string += str(count) + '. ' + i + ',\n'
+      count+=1  
+    return string[:-2]
+  except KeyError:
+    return False;
 
 def getTitle():
     randomauthor = randrange(len(authors))
@@ -75,6 +78,11 @@ def delete_Books(username, bookIndex):
     db[username] = user
   return book
 
+def checkUser(username):
+  if username in db.keys():
+    return False
+  else:
+    return True
 
 @client.event
 async def on_ready():  # event when bot is ready
@@ -94,11 +102,22 @@ async def on_message(message):
         await message.channel.send("Welcome to Noura's Book Recommendation Bot! Here are the instructions:\n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user")
 
     if msg.startswith("$user"):
-        userBool = True
         username = msg.split("$user ", 1)[1]
+        await message.channel.send("Are you a new user?\nPlease send '$yes' or '$no'")
+    
+    if msg.startswith("$yes"):
+      if checkUser(username) == False:
+        await message.channel.send("This username is already taken, please use $user and input a new user name")
+      else:
+            userBool = True
+            ListBooks.append(newBook)
+            await message.channel.send(newBook)
+    
+    if msg.startswith("$no"):
+        userBool = True
         ListBooks.append(newBook)
         await message.channel.send(newBook)
-    
+
     if message.content.startswith("$book"):
         if userBool == True:
             ListBooks.append(newBook)
@@ -119,8 +138,11 @@ async def on_message(message):
     
     if message.content.startswith("$show"):
       if userBool == True:
-        await message.channel.send(getRead(username))
-        await message.channel.send("\nUse $delete followed by the book number to delete a book from the list.")
+        if not getRead(username):
+           await message.channel.send("Read-list is empty.")
+        else:
+          await message.channel.send(getRead(username))
+          await message.channel.send("\nUse $delete followed by the book number to delete a book from the list.")
       else:
         await message.channel.send("Please enter your username using $user")
     
@@ -138,8 +160,6 @@ async def on_message(message):
         await message.channel.send(username + " is currently logged in.")
       else:
         await message.channel.send("Please enter your username using $user")
-
-
     
     if message.author == client.user:
         return
