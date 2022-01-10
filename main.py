@@ -69,15 +69,19 @@ async def on_ready():  # event when bot is ready
 @client.event
 async def on_member_join(member):
   guild = client.get_guild(875833944564707329)
-  await member.send(f'Welcome to the {guild.name}, {member.name}! Here are some instructions: \n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user')
+  await member.send(f'Welcome to the {guild.name}, {member.name}! Here are some instructions: \n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user\n$show: will return a list of books that you have previously read')
 
 #client = discord.Client()
 
 def update_Books(username, book):
+
   if username in db.keys():
-    user = db[username]
-    user.append(book)
-    db[username] = user
+    try:
+      user = db[username]
+      user.append(book)
+      db[username] = user
+    except: 
+      db[username] = [book]
   else:
     db[username] = [book]
 
@@ -107,7 +111,7 @@ async def on_message(message):
     newBook = getBooks()
     msg = message.content
     if client.user.mentioned_in(message):
-        await message.channel.send("Welcome to Noura's Book Recommendation Bot! Here are the instructions:\n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user")
+        await message.channel.send("Welcome to Noura's Book Recommendation Bot! Here are the instructions:\n\n$user-username: Before using the other functionalities of the bot, please use $user followed by your username to log into your account. \n$book: will recommend a book to you. \n$read: will add the currently recommended book to your read-list and the bot will NOT recommend this book to you anymore.\n $delete-index: will delete the book from your read-list.\n$logged: will return the currently logged in user\n$show: will return a list of books that you have previously read")
 
     if msg.startswith("$user"):
       try:
@@ -181,4 +185,3 @@ my_secret = os.environ['DISCORDTOKEN']
 
 keep_alive()
 client.run(my_secret)
-
